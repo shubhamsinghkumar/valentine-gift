@@ -142,32 +142,46 @@
             document.querySelectorAll('.heart').forEach(heart => heart.remove());
         }
 
-
         function createHeart() {
-            if (!gameStarted) return;
+    if (!gameStarted) return;
+    
+    const heart = document.createElement('div');
+    heart.textContent = '❤';
+    heart.classList.add('heart');
+    
+    // Get game container dimensions and position
+    const gameContainer = document.querySelector('.game-container');
+    const containerRect = gameContainer.getBoundingClientRect();
+    
+    // Generate random position
+    let randomX, randomY;
+    do {
+        randomX = Math.random() * (window.innerWidth - 50);
+        randomY = Math.random() * (window.innerHeight - 50);
+    } while (
+        randomX >= containerRect.left && 
+        randomX <= containerRect.right && 
+        randomY >= containerRect.top && 
+        randomY <= containerRect.bottom
+    );
+    
+    heart.style.left = `${randomX}px`;
+    heart.style.top = `${randomY}px`;
+    
+    document.body.appendChild(heart);
+    
+    heart.addEventListener('click', () => {
+        score++;
+        scoreDisplay.textContent = score;
+        heart.remove();
+    });
 
-            const heart = document.createElement('div');
-            heart.textContent = '❤';
-            heart.classList.add('heart');
-
-            // Set random position using JavaScript
-            heart.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
-            heart.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
-
-            document.body.appendChild(heart);
-
-            heart.addEventListener('click', () => {
-                score++;
-                scoreDisplay.textContent = score;
-                heart.remove();
-            });
-
-            setTimeout(() => {
-                if (heart && heart.parentNode) {
-                    heart.remove();
-                }
-            }, 3000);
+    setTimeout(() => {
+        if (heart && heart.parentNode) {
+            heart.remove();
         }
+    }, 3000);
+}
 
 
         startButton.addEventListener('click', () => {
