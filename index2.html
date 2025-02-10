@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valentine's Day Heart Collector</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #FFB6C1;
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        .game-container {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            z-index: 2;
+        }
+
+        h1 {
+            font-size: clamp(1.5rem, 4vw, 2.5rem);
+            color: #FF1493;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            margin-bottom: 1rem;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: clamp(2rem, 4vw, 3rem);
+            cursor: pointer;
+            animation: float 2s ease-in-out infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-30px);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .score,
+        .timer {
+            font-size: clamp(1.2rem, 3vw, 1.5rem);
+            margin: 10px 0;
+            color: #FF69B4;
+        }
+
+        #start-btn {
+            font-size: clamp(1rem, 2vw, 1.5rem);
+            padding: 10px 20px;
+            background-color: #FF69B4;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+        }
+
+        #start-btn:hover {
+            background-color: #FF1493;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Valentine's Day Heart Collector</h1>
+        <p>Click on as many hearts as you can before time runs out!</p>
+        <button id="start-btn">Start Game</button>
+        <div class="score">Score: <span id="score">0</span></div>
+        <div class="timer">Time: <span id="time-left">30</span> seconds</div>
+    </div>
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let gameInterval;
+        let heartInterval;
+        let gameStarted = false;
+
+        const startButton = document.getElementById('start-btn');
+        const scoreDisplay = document.getElementById('score');
+        const timeLeftDisplay = document.getElementById('time-left');
+
+        function startGame() {
+            score = 0;
+            timeLeft = 30;
+            gameStarted = true;
+            scoreDisplay.textContent = score;
+            timeLeftDisplay.textContent = timeLeft;
+            startButton.disabled = true;
+            gameInterval = setInterval(updateTime, 1000);
+            heartInterval = setInterval(createHeart, 1000);
+        }
+
+        function updateTime() {
+            timeLeft--;
+            timeLeftDisplay.textContent = timeLeft;
+            if (timeLeft <= 0) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            clearInterval(gameInterval);
+            clearInterval(heartInterval);
+            gameStarted = false;
+            startButton.disabled = false;
+            startButton.textContent = 'Play Again';
+            alert('No matter how much you scored, You are always a winner cutie! Your score is: ' + score);
+
+            // Remove all remaining hearts
+            document.querySelectorAll('.heart').forEach(heart => heart.remove());
+        }
+
+
+        function createHeart() {
+            if (!gameStarted) return;
+
+            const heart = document.createElement('div');
+            heart.textContent = '❤';
+            heart.classList.add('heart');
+
+            // Set random position using JavaScript
+            heart.style.left = `${Math.random() * (window.innerWidth - 50)}px`;
+            heart.style.top = `${Math.random() * (window.innerHeight - 50)}px`;
+
+            document.body.appendChild(heart);
+
+            heart.addEventListener('click', () => {
+                score++;
+                scoreDisplay.textContent = score;
+                heart.remove();
+            });
+
+            setTimeout(() => {
+                if (heart && heart.parentNode) {
+                    heart.remove();
+                }
+            }, 3000);
+        }
+
+
+        startButton.addEventListener('click', () => {
+            if (!gameStarted) {
+                startGame();
+                startButton.textContent = 'Game in Progress...';
+            }
+        });
+    </script>
+</body>
+
+</html>
